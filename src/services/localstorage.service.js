@@ -14,10 +14,10 @@ export default {
         return tkn;
     },
     setState(state){
-        localStorage.setItem("isAuthenticated", state);
+        sessionStorage.setItem("isAuthenticated", state);
     },
     isAuthenticated(){       
-        return localStorage.getItem("isAuthenticated");
+        return sessionStorage.getItem("isAuthenticated");
     },
     deleteStorage(){
         localStorage.clear();

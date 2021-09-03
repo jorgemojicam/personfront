@@ -68,6 +68,7 @@ export default {
                 this.$store.state.isAuthenticated = true;
                 srvlocalStorage.setState(true)
                 srvlocalStorage.setUser(suss.data.datauser)
+                console.log("entro login")
                 this.$router.push("/admin");
               }
             }

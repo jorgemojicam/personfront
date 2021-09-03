@@ -5,15 +5,19 @@ import vuetify from './plugins/vuetify'
 import store from './store'
 
 Vue.config.productionTip = false
+const isAuth = sessionStorage.getItem("isAuthenticated")
 
 router.beforeEach((to, from, next) => {
   console.log(to.name)
-  if (to.name !== 'login' && !localStorage.getItem("isAuthenticated")) {
-    console.log("entrrrrrrrrrreeeeeeee")
+  console.log(isAuth)
+  
+  if (to.name !== 'login' && !isAuth) {
+    console.log("entrooo if")
     next({ name: 'login' })
   } else {
-    next()
-    //store.state.isAuthenticated = localStorage.getItem("isAuthenticated")
+    console.log("etro else")
+    store.state.isAuthenticated = isAuth
+    next()    
   }
 })
 
