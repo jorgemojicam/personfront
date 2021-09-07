@@ -23,13 +23,15 @@
       <v-divider></v-divider>
 
       <v-list dense>
-        <v-list-item v-for="item in items" :key="item.title" link>
+        <v-list-item v-for="item in items" :key="item.title" link :to="item.ruta">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title>{{
+              item.title
+            }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -53,9 +55,9 @@ export default {
     drawer: false,
     group: null,
     items: [
-      { title: "Home", icon: "mdi-view-dashboard" },
-      { title: "About", icon: "mdi-forum" },
-      { title: "More", icon: "mdi-forum" },
+      { title: "Registro", icon: "mdi-view-dashboard", ruta: "registro" },
+      { title: "About", icon: "mdi-forum", ruta: "about" },
+      { title: "Login", icon: "mdi-forum", ruta: "login" },
     ],
   }),
   methods: {

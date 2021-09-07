@@ -8,14 +8,10 @@ Vue.config.productionTip = false
 const isAuth = sessionStorage.getItem("isAuthenticated")
 
 router.beforeEach((to, from, next) => {
-  console.log(to.name)
-  console.log(isAuth)
-  
-  if (to.name !== 'login' && !isAuth) {
-    console.log("entrooo if")
+ 
+  if (to.name !== 'login' && !isAuth) {   
     next({ name: 'login' })
-  } else {
-    console.log("etro else")
+  } else {    
     store.state.isAuthenticated = isAuth
     next()    
   }

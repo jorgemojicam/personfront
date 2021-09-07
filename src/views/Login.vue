@@ -60,15 +60,16 @@ export default {
           password: this.password,
         };
 
-        this.authorization(cuenta).then(
+        await this.authorization(cuenta).then(
           (suss) => {
             if (suss) {
               console.log(suss)
-              if (suss.data && suss.data.datauser) {
+              if (suss.data && suss.data.dataUser) {
                 
                 this.$store.state.isAuthenticated = true;
                 srvlocalStorage.setState(true)
-                srvlocalStorage.setUser(suss.data.datauser)
+                srvlocalStorage.setToken(suss.data.accesToken)
+                srvlocalStorage.setUser(suss.data.dataUser)
                 console.log("entro login")                
                 this.$router.push("/");
               }
