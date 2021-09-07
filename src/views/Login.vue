@@ -63,13 +63,14 @@ export default {
         this.authorization(cuenta).then(
           (suss) => {
             if (suss) {
+              console.log(suss)
               if (suss.data && suss.data.datauser) {
                 
                 this.$store.state.isAuthenticated = true;
                 srvlocalStorage.setState(true)
                 srvlocalStorage.setUser(suss.data.datauser)
-                console.log("entro login")
-                this.$router.push("/admin");
+                console.log("entro login")                
+                this.$router.push("/");
               }
             }
           },
