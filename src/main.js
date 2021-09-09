@@ -5,13 +5,16 @@ import vuetify from './plugins/vuetify'
 import store from './store'
 
 Vue.config.productionTip = false
-const isAuth = sessionStorage.getItem("isAuthenticated")
+
 
 router.beforeEach((to, from, next) => {
+  const isAuth = sessionStorage.getItem("isAuthenticated")
  
   if (to.name !== 'login' && !isAuth) {   
+    console.log("entro redireccion main")
     next({ name: 'login' })
-  } else {    
+  } else {
+    
     store.state.isAuthenticated = isAuth
     next()    
   }

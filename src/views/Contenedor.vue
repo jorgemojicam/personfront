@@ -16,7 +16,7 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>John Leider</v-list-item-title>
+          <v-list-item-title>{{this.$store.state.user.nombre_use + " " +this.$store.state.user.apellido_use}}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
@@ -58,6 +58,7 @@ export default {
       { title: "Registro", icon: "mdi-view-dashboard", ruta: "registro" },
       { title: "About", icon: "mdi-forum", ruta: "about" },
       { title: "Login", icon: "mdi-forum", ruta: "login" },
+      { title: "Usuarios", icon: "mdi-account-circle", ruta: "usuarios" },
     ],
   }),
   methods: {

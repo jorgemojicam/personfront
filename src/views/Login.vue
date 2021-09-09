@@ -1,26 +1,40 @@
 <template>
   <v-container bg fill-height grid-list-md text-xs-center>
     <v-row align="center" justify="center">
-      <v-form ref="form" v-model="valid" lazy-validation>
-        <v-text-field
-          v-model="username"
-          label="Cedula"
-          :rules="[(v) => !!v || 'Ingrese cedula']"
-          required
-        ></v-text-field>
-        <v-text-field
-          v-model="password"
-          type="password"
-          :rules="[(v) => !!v || 'Ingrese contraseña']"
-          label="Contrasena"
-          required
-        ></v-text-field>
+      <v-card  max-width="400" outlined>
+        <v-img
+          class="white--text align-end"          
+          src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+        ></v-img>
+        <v-card-title> Inicio de sesion </v-card-title>
+        <v-card-text>
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-text-field
+              v-model="username"
+              label="Cedula"
+              :rules="[(v) => !!v || 'Ingrese cedula']"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="password"
+              type="password"
+              :rules="[(v) => !!v || 'Ingrese contraseña']"
+              label="Contrasena"
+              required
+            ></v-text-field>
 
-        <v-btn :disabled="!valid" color="success" class="mr-4" @click="login">
-          Login
-        </v-btn>
-        <v-btn color="warning"> Recuperar Contraseña </v-btn>
-      </v-form>
+            <v-btn
+              :disabled="!valid"
+              color="success"
+              class="mr-4"
+              @click="login"
+            >
+              Login
+            </v-btn>
+            <v-btn color="warning"> Recuperar Contraseña </v-btn>
+          </v-form>
+        </v-card-text>
+      </v-card>
     </v-row>
 
     <v-snackbar v-model="snackbar" :timeout="timeout">
@@ -53,73 +67,37 @@ export default {
   },
   components: {},
   methods: {
-    async login() {
+    login() {
       if (this.$refs.form.validate()) {
         let cuenta = {
           username: this.username,
           password: this.password,
         };
 
-        await this.authorization(cuenta).then(
+        srvCuentaacceso.auth(cuenta).then(
           (suss) => {
-            if (suss) {
-              console.log(suss)
+            if (suss.data) {
               if (suss.data && suss.data.dataUser) {
-                
                 this.$store.state.isAuthenticated = true;
-                srvlocalStorage.setState(true)
-                srvlocalStorage.setToken(suss.data.accesToken)
-                srvlocalStorage.setUser(suss.data.dataUser)
-                console.log("entro login")                
+                this.$store.state.user = suss.data.dataUser;
+                srvlocalStorage.setState(true);
+                srvlocalStorage.setToken(suss.data.accesToken);
+                srvlocalStorage.setUser(suss.data.dataUser);
+                console.log("entro login");
                 this.$router.push("/");
               }
+            } else {
+              console.log("error");
             }
           },
           (err) => {
-            console.log("->", err);
+            console.log(err);
           }
         );
       } else {
         alert("err");
       }
     },
-    authorization(user) {
-      return new Promise((resolve) => {
-        srvCuentaacceso.auth(user).then(
-          (res) => {
-            if (res.data) {
-              resolve(res);
-            } else {
-              console.log("error");
-              resolve(null);
-            }
-          },
-          (err) => {
-            console.log(err);
-            resolve(null);
-          }
-        );
-      });
-    },
-    /*
-    async onSuccess(googleUser) {
-      if (googleUser) {
-        if (datosPerfil.data) {
-          sessionStorage.setItem("user", JSON.stringify("userGoo"));
-          sessionStorage.setItem("isAuthenticated", true);
-          sessionStorage.setItem("perfil", JSON.stringify("datosPerfil.data"));
-
-          this.$store.state.isAuthenticated = true;
-          this.$store.state.user = "userGoo";
-          this.$store.state.perfil = datosPerfil;
-          this.$router.push("/admin");
-        } else {
-          this.snackbar = true;
-          this.snacktext = datosPerfil.error;
-        }
-      }
-    },
-    */
   },
   mounted() {},
 };
