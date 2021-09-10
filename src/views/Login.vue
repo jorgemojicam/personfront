@@ -1,39 +1,44 @@
 <template>
   <v-container bg fill-height grid-list-md text-xs-center>
     <v-row align="center" justify="center">
-      <v-card  max-width="400" outlined>
-        <v-img
-          class="white--text align-end"          
-          src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-        ></v-img>
-        <v-card-title> Inicio de sesion </v-card-title>
-        <v-card-text>
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-text-field
-              v-model="username"
-              label="Cedula"
-              :rules="[(v) => !!v || 'Ingrese cedula']"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="password"
-              type="password"
-              :rules="[(v) => !!v || 'Ingrese contraseña']"
-              label="Contrasena"
-              required
-            ></v-text-field>
+      <v-card elevation="2" shaped max-width="800" outlined>
+        <v-layout align-center>
+          <v-flex xs6>
+            
+            <v-img
+              src="https://images4.alphacoders.com/668/thumb-1920-668770.jpg"
+            ></v-img>
+          </v-flex>
+          <v-flex xs6 class="hidden-sm-and-down">
+            <v-card-text>
+              <v-form ref="form" v-model="valid" lazy-validation>
+                <v-text-field
+                  v-model="username"
+                  label="Cedula"
+                  :rules="[(v) => !!v || 'Ingrese cedula']"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="password"
+                  type="password"
+                  :rules="[(v) => !!v || 'Ingrese contraseña']"
+                  label="Contrasena"
+                  required
+                ></v-text-field>
 
-            <v-btn
-              :disabled="!valid"
-              color="success"
-              class="mr-4"
-              @click="login"
-            >
-              Login
-            </v-btn>
-            <v-btn color="warning"> Recuperar Contraseña </v-btn>
-          </v-form>
-        </v-card-text>
+                <v-btn
+                  :disabled="!valid"
+                  color="success"
+                  class="mr-4"
+                  @click="login"
+                >
+                  Login
+                </v-btn>
+                <v-btn color="warning"> Recuperar Contraseña </v-btn>
+              </v-form>
+            </v-card-text>
+          </v-flex>
+        </v-layout>
       </v-card>
     </v-row>
 

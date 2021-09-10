@@ -3,8 +3,9 @@
     <v-form @submit.prevent="submit" ref="form" v-model="valid">
       <v-card class="mx-auto" outlined>
         <v-card-text>
+          <v-card-title>Registro firmas</v-card-title>
           <v-row>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="4">
               <v-autocomplete
                 v-model="depto"
                 :items="listdeptos"
@@ -17,7 +18,7 @@
                 return-object
               ></v-autocomplete>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="4">
               <v-autocomplete
                 v-model="municipio"
                 :items="listmun"
@@ -25,6 +26,18 @@
                 item-value="id_mun"
                 label="Municipio"
                 required
+                :rules="[(mun) => !!mun || 'Municipio requerido']"
+                return-object
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-autocomplete
+                v-model="coordinador"
+                :items="listcoor"
+                :item-text="getItemText"
+                item-value="id_use"
+                label="Coordinador"
+                :rules="[(va) => !!va || 'Coordinador requerido']"
                 return-object
               ></v-autocomplete>
             </v-col>
@@ -33,6 +46,7 @@
                 v-model="validas"
                 type="number"
                 label="Numero Validas"
+                :rules="[(va) => !!va || 'Numero requerido']"
                 required
               ></v-text-field>
             </v-col>
@@ -41,6 +55,7 @@
                 v-model="novalidas"
                 type="number"
                 label="Numero no Validas"
+                :rules="[(va) => !!va || 'Numero requerido']"
                 required
               ></v-text-field>
             </v-col>
@@ -52,16 +67,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="6">
-              <v-autocomplete
-                v-model="coordinador"
-                :items="listcoor"
-                :item-text="getItemText"
-                item-value="id_use"
-                label="Coordinador"
-                return-object
-              ></v-autocomplete>
-            </v-col>
+
             <v-col cols="12"> </v-col>
           </v-row>
         </v-card-text>
@@ -100,7 +106,7 @@ export default {
   data() {
     return {
       depto: "",
-      municipio: [],
+      municipio: "",
       listmun: [],
       listdeptos: [],
       coordinador: "",
@@ -124,6 +130,24 @@ export default {
         srvregistro.get().then(
           (sus) => {
             resolve(sus);
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
+    create(data) {
+      return new Promise((resolve) => {
+        srvregistro.insert(data).then(
+          (sus) => {
+            if (sus && sus.data) {
+              resolve(sus.data);
+            } else {
+              console.log("error ", sus);
+              resolve(null);
+            }
           },
           (err) => {
             console.log(err);
@@ -191,9 +215,23 @@ export default {
       else if (calories > 200) return "orange";
       else return "green";
     },
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
-        alert("entro");
+        let data = {
+          numerovalidas: parseInt(this.validas),
+          numeroinvalidas: parseInt(this.novalidas),
+          total: parseInt(this.total),
+          idmunicipio: this.municipio.id_mun,
+          fecha: "2021-09-09",
+          idcuentaacceso: 1,
+          iduser: this.$store.state.user.id_use,
+        };
+
+        let rescrea = await this.create(data);
+        if (rescrea.insertId > 0) {
+          await this.load();
+        }
+        console.log(rescrea);
       }
     },
     async changemun(iddepto) {
@@ -202,6 +240,10 @@ export default {
     },
     getItemText(item) {
       return `${item.nombre_use} ${item.apellido_use}`;
+    },
+    async load() {
+      let res = await this.get();
+      this.registrofirmas = res.data;
     },
   },
 

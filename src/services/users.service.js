@@ -11,6 +11,9 @@ export default {
     get() {
         return axios.get(`${process.env.VUE_APP_BASEURL}user`, head);
     },
+    insert(data) {
+        return axios.post(`${process.env.VUE_APP_BASEURL}user`, data, head);
+    },
     getbyid(id) {
         return axios.get(`${process.env.VUE_APP_BASEURL}user/${id}`, head);
     },

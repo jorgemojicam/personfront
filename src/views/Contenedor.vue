@@ -38,7 +38,7 @@
     </v-navigation-drawer>
 
     <v-content>
-      <v-container fluid>
+      <v-container class="mt-10" fluid>
         <router-view></router-view>
       </v-container>
     </v-content>
@@ -55,10 +55,9 @@ export default {
     drawer: false,
     group: null,
     items: [
-      { title: "Registro", icon: "mdi-view-dashboard", ruta: "registro" },
-      { title: "About", icon: "mdi-forum", ruta: "about" },
-      { title: "Login", icon: "mdi-forum", ruta: "login" },
+      { title: "Registro", icon: "mdi-clipboard-check-outline", ruta: "registro" },     
       { title: "Usuarios", icon: "mdi-account-circle", ruta: "usuarios" },
+      { title: "Reportes", icon: "mdi-chart-box-outline", ruta: "usuarios" },
     ],
   }),
   methods: {

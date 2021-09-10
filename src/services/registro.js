@@ -12,7 +12,7 @@ export default {
         return axios.get(process.env.VUE_APP_BASEURL + 'registro', head);
     },
     insert(data) {
-        return axios.post('http://localhost:3000/', data);
+        return axios.post(`${process.env.VUE_APP_BASEURL}registro`, data, head);
     },
     update() {
         return axios.put('http://localhost:3000/api/registro');
