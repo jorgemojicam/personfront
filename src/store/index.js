@@ -5,11 +5,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    isAuthenticated: false,
+    isAuthenticated: false,   
     user: {},
-    modulos:{}
+    modulos: {}
   },
-  getters:{
+  getters: {
     getUser: state => state.user,
     getmodulos: state => state.modulos
   },

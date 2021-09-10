@@ -14,7 +14,7 @@ router.beforeEach((to, from, next) => {
     console.log("entro redireccion main")
     next({ name: 'login' })
   } else {
-    const user = JSON.parse(localStorage.getItem("user"))
+    const user = JSON.parse(localStorage.getItem("user"))   
     store.state.isAuthenticated = isAuth
     store.state.user = user;
     next()    
