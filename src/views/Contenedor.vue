@@ -57,7 +57,7 @@ export default {
     items: [
       { title: "Registro", icon: "mdi-clipboard-check-outline", ruta: "registro" },     
       { title: "Usuarios", icon: "mdi-account-circle", ruta: "usuarios" },
-      { title: "Reportes", icon: "mdi-chart-box-outline", ruta: "usuarios" },
+      { title: "Reportes", icon: "mdi-chart-box-outline", ruta: "reporte" },
     ],
   }),
   methods: {

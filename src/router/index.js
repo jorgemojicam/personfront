@@ -5,6 +5,7 @@ import Registro from '../views/Registro'
 import Login from '../views/Login'
 import Contenedor from '../views/Contenedor'
 import Usuarios from '../views/Usuarios'
+import Reporte from '../views/Reporte'
 
 Vue.use(VueRouter)
 
@@ -38,6 +39,11 @@ const routes = [
         path: '/usuarios',
         name: 'Usuarios',
         component: Usuarios
+      },
+      {
+        path: '/reporte',
+        name: 'Reporte',
+        component: Reporte
       }
     ]
   }

@@ -25,7 +25,7 @@
                 Cuenta Acceso
               </v-stepper-step>
             </v-stepper-header>
-
+            <!-- datos generales del usuario -->
             <v-stepper-items>
               <v-stepper-content step="1">
                 <v-form ref="form" v-model="valid">
@@ -75,23 +75,29 @@
                       Guardar
                     </v-btn>
                     <v-btn class="mr-4"> Limpiar </v-btn>
-                    <v-btn color="primary" @click="e1 = 2"> Continuar </v-btn>
+                    <v-btn
+                      color="primary"
+                      :disabled="iduser == 0"
+                      @click="e1 = 2"
+                    >
+                      Continuar
+                    </v-btn>
                   </v-container>
                 </v-form>
               </v-stepper-content>
-
+              <!-- cuenta de acceso  -->
               <v-stepper-content step="2">
                 <v-container>
                   <v-row>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="3">
                       <v-text-field
                         v-model="username"
                         label="Username"
-                        :rules="[(va) => !!va || 'Nombre de usuario requerido']"
+                        :rules="[(va) => !!va || 'Nombre de usuario requerido']"                        
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="3">
                       <v-text-field
                         v-model="passw"
                         label="Contraseña"
@@ -100,7 +106,7 @@
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="3">
                       <v-text-field
                         v-model="confirmpassw"
                         label="Confirmar Contraseña"
@@ -109,7 +115,16 @@
                         required
                       ></v-text-field>
                     </v-col>
-
+                    <v-col cols="12" md="3">
+                      <v-select
+                        v-model="rol"
+                        :items="listroles"
+                        item-text="nombre_rol"
+                        item-value="id_rol"
+                        label="Rol"
+                        return-object
+                      ></v-select>
+                    </v-col>
                     <v-col cols="12"> </v-col>
                   </v-row>
                   <v-btn color="primary mr-4" @click="e1 = 1"> Atras </v-btn>
@@ -117,7 +132,7 @@
                     class="success mr-4"
                     :disabled="!valid"
                     type="button"
-                    @click="guardar"
+                    @click="guardaracceso"
                   >
                     Guardar
                   </v-btn>
@@ -162,13 +177,14 @@
 <script>
 import srvusuarios from "../services/users.service";
 import srvcuentaacceso from "../services/cuentaacceso.service";
+import srvroles from "../services/roles.service";
 
 export default {
   name: "Usuarios",
   components: {},
   data() {
     return {
-      iduser: "",
+      iduser: 0,
       nombre: "",
       apellido: "",
       email: "",
@@ -176,7 +192,9 @@ export default {
       username: "",
       passw: "",
       confirmpassw: "",
+      rol: "",
       dialog: false,
+      listroles: [],
       encabezado: [
         { text: "Nombre", value: "nombre_use" },
         { text: "Apellido", value: "apellido_use" },
@@ -196,6 +214,21 @@ export default {
         srvusuarios.get().then(
           (sus) => {
             resolve(sus);
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
+    getroles() {
+      return new Promise((resolve) => {
+        srvroles.get().then(
+          (sus) => {
+            if (sus && sus.data) {
+              resolve(sus.data);
+            }
           },
           (err) => {
             console.log(err);
@@ -240,12 +273,17 @@ export default {
         );
       });
     },
-    async oncreate(){
-      this.dialog = true
+    async oncreate() {
+      this.dialog = true;
+      this.iduser = 0;
+      this.nombre = "";
+      this.apellido = "";
+      this.email = "";
+      this.cedula = "";
     },
     async onedit(e) {
       console.log(e);
-      //this.$refs.form.reset();      
+      //this.$refs.form.reset();
       this.dialog = true;
       this.iduser = e.id_use;
       this.nombre = e.nombre_use;
@@ -273,8 +311,16 @@ export default {
         console.log(rescrea);
       }
     },
-    async guardaracceso(){
-
+    async guardaracceso() {
+      let data = {
+        username: this.cedula,
+        password: this.passw,
+        iduse: this.iduser,
+        idrol: this.rol.id_rol,
+      };
+      console.log("datos create acceso ->", data);
+      let resrol = await this.createacceso(data);
+      console.log(resrol);
     },
     async load() {
       let res = await this.get();
@@ -285,6 +331,8 @@ export default {
   computed: {},
   async mounted() {
     await this.load();
+    let resrol = await this.getroles();
+    this.listroles = resrol;
   },
 };
 </script>
