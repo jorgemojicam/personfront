@@ -7,7 +7,7 @@
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
-          label="Buscar"
+          label="Buscar Registro"
           single-line
           hide-details
         ></v-text-field>
