@@ -41,7 +41,16 @@
                 return-object
               ></v-autocomplete>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="3">
+              <v-text-field
+                v-model="folio"
+                type="number"
+                label="Folio"
+                :rules="[(va) => !!va || 'Numero requerido']"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3">
               <v-text-field
                 v-model="validas"
                 type="number"
@@ -50,7 +59,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="3">
               <v-text-field
                 v-model="novalidas"
                 type="number"
@@ -59,7 +68,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="3">
               <v-text-field
                 v-model="total"
                 label="Total"
@@ -110,10 +119,12 @@ export default {
       listmun: [],
       listdeptos: [],
       coordinador: "",
+      folio: "",
       listcoor: [],
       validas: "",
       novalidas: "",
       headers: [
+        { text: "Folio", value: "folio_reg" },
         { text: "Municipio", value: "nombre_mun" },
         { text: "Usuario Registro", value: "full_name" },
         { text: "Validas", value: "numeroinvalidas_reg" },
@@ -125,9 +136,9 @@ export default {
     };
   },
   methods: {
-    get() {
+    get(iduser) {
       return new Promise((resolve) => {
-        srvregistro.get().then(
+        srvregistro.getbyuser(iduser).then(
           (sus) => {
             resolve(sus);
           },
@@ -223,8 +234,9 @@ export default {
           total: parseInt(this.total),
           idmunicipio: this.municipio.id_mun,
           fecha: "2021-09-09",
-          idcuentaacceso: 1,
-          iduser: this.$store.state.user.id_use,
+          idcuentaacceso: this.$store.state.user.id_use,
+          iduser: this.coordinador.id_use,
+          folio: parseInt(this.folio)
         };
 
         let rescrea = await this.create(data);
@@ -242,8 +254,11 @@ export default {
       return `${item.nombre_use} ${item.apellido_use}`;
     },
     async load() {
-      let res = await this.get();
+      let iduser = this.$store.state.user.id_use
+      console.log("entro")
+      let res = await this.get(iduser);
       this.registrofirmas = res.data;
+      
     },
   },
 
@@ -256,11 +271,8 @@ export default {
     },
   },
   async mounted() {
-    let res = await this.get();
-    this.registrofirmas = res.data;
-
-    console.log("user ", this.$store.state.user);
-
+    this.load()
+    
     let resdepto = await this.getDepto();
     this.listdeptos = resdepto;
 

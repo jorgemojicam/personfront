@@ -16,32 +16,37 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>{{this.$store.state.user.nombre_use + " " +this.$store.state.user.apellido_use}}</v-list-item-title>
+          <v-list-item-title>{{
+            this.$store.state.user.nombre_use +
+            " " +
+            this.$store.state.user.apellido_use
+          }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
 
       <v-list dense>
-        <v-list-item v-for="item in items" :key="item.title" link :to="item.ruta">
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          link
+          :to="item.ruta"
+        >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{
-              item.title
-            }}</v-list-item-title>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
-    <v-content>
-      <v-container class="mt-10" fluid>
-        <router-view></router-view>
-      </v-container>
-    </v-content>
+    <v-container class="mt-14">
+      <router-view></router-view>
+    </v-container>
   </v-app>
 </template>
 
@@ -55,7 +60,11 @@ export default {
     drawer: false,
     group: null,
     items: [
-      { title: "Registro", icon: "mdi-clipboard-check-outline", ruta: "registro" },     
+      {
+        title: "Registro",
+        icon: "mdi-clipboard-check-outline",
+        ruta: "registro",
+      },
       { title: "Usuarios", icon: "mdi-account-circle", ruta: "usuarios" },
       { title: "Reportes", icon: "mdi-chart-box-outline", ruta: "reporte" },
     ],

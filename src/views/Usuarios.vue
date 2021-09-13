@@ -25,13 +25,14 @@
                 Cuenta Acceso
               </v-stepper-step>
             </v-stepper-header>
-            <!-- datos generales del usuario -->
+
             <v-stepper-items>
+              <!-- datos generales del usuario -->
               <v-stepper-content step="1">
                 <v-form ref="form" v-model="valid">
                   <v-container>
                     <v-row>
-                      <v-col cols="12" md="2">
+                      <v-col cols="12" md="4">
                         <v-text-field
                           v-model="cedula"
                           label="Cedula"
@@ -40,7 +41,7 @@
                           required
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="3">
+                      <v-col cols="12" md="4">
                         <v-text-field
                           v-model="nombre"
                           label="Nombres"
@@ -48,7 +49,7 @@
                           required
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="3">
+                      <v-col cols="12" md="4">
                         <v-text-field
                           v-model="apellido"
                           label="Apellidos"
@@ -56,7 +57,7 @@
                           required
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="4">
+                      <v-col cols="12" md="8">
                         <v-text-field
                           v-model="email"
                           label="Email"
@@ -64,7 +65,12 @@
                           required
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12"> </v-col>
+                      <v-col cols="4">
+                        <v-switch
+                          v-model="coordinador"
+                          :label="`Es Coordinador?`"
+                        ></v-switch>
+                      </v-col>
                     </v-row>
                     <v-btn
                       class="success mr-4"
@@ -93,7 +99,7 @@
                       <v-text-field
                         v-model="username"
                         label="Username"
-                        :rules="[(va) => !!va || 'Nombre de usuario requerido']"                        
+                        :rules="[(va) => !!va || 'Nombre de usuario requerido']"
                         required
                       ></v-text-field>
                     </v-col>
@@ -171,6 +177,23 @@
         </v-btn>
       </template>
     </v-data-table>
+
+    <v-snackbar
+      :timeout="-1"
+      v-model="snackbar"
+      absolute
+      bottom
+      color="success"
+      outlined
+      right
+    >
+      {{ textsnakbar }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="green" text v-bind="attrs" @click="snackbar = false">
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -185,6 +208,7 @@ export default {
   data() {
     return {
       iduser: 0,
+      idcuentaacceso: 0,
       nombre: "",
       apellido: "",
       email: "",
@@ -195,6 +219,7 @@ export default {
       rol: "",
       dialog: false,
       listroles: [],
+      coordinador: false,
       encabezado: [
         { text: "Nombre", value: "nombre_use" },
         { text: "Apellido", value: "apellido_use" },
@@ -206,6 +231,8 @@ export default {
       listusuarios: [],
       valid: true,
       e1: 1,
+      snackbar: false,
+      textsnakbar: "inserto correctamente",
     };
   },
   methods: {
@@ -298,6 +325,7 @@ export default {
           apellido: this.apellido,
           email: this.email,
           cedula: this.cedula,
+          coordinador: this.coordinador,
         };
 
         let rescrea = await this.create(data);
@@ -305,6 +333,8 @@ export default {
           //this.dialog = false;
           this.iduser = rescrea.insertId;
           await this.load();
+          this.textsnakbar = "Se creo el usuario correctamente";
+          this.snackbar = true;
         } else {
           alert("errrorrr");
         }
@@ -315,12 +345,19 @@ export default {
       let data = {
         username: this.cedula,
         password: this.passw,
-        iduse: this.iduser,
+        iduser: this.iduser,
         idrol: this.rol.id_rol,
       };
       console.log("datos create acceso ->", data);
-      let resrol = await this.createacceso(data);
-      console.log(resrol);
+      let rescrea = await this.createacceso(data);
+      if (rescrea && rescrea.insertId > 0) {
+        //this.dialog = false;
+        this.idcuentaacceso = rescrea.insertId;
+        await this.load();
+      } else {
+        alert("errrorrr");
+      }
+      console.log(rescrea);
     },
     async load() {
       let res = await this.get();
