@@ -1,7 +1,7 @@
 <template>
   <v-container bg fill-height grid-list-md text-xs-center>
     <v-row align="center" justify="center">
-      <v-card elevation="2" max-width="400" shaped outlined>
+      <v-card elevation="2" max-width="600" shaped outlined>
         <v-img
           class="white--text align-end"
           gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"

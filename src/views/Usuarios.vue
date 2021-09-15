@@ -1,155 +1,149 @@
 <template>
   <div>
-    <v-row justify="center">
-      <v-dialog
-        v-model="dialog"
-        persistent
-        transition="dialog-bottom-transition"
-      >
-        <v-card>
-          <v-toolbar dark color="primary">
-            <v-toolbar-title>Registro usuarios</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon dark @click="dialog = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-toolbar>
+    <v-dialog v-model="dialog" persistent transition="dialog-bottom-transition">
+      <v-card>
+        <v-toolbar dark color="primary">
+          <v-toolbar-title>Registro usuarios</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon dark @click="dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
 
-          <v-stepper alt-labels v-model="e1">
-            <v-stepper-header>
-              <v-stepper-step editable :complete="e1 > 1" step="1">
-                Datos usuario
-              </v-stepper-step>
-              <v-divider></v-divider>
-              <v-stepper-step editable :complete="e1 > 2" step="2">
-                Cuenta Acceso
-              </v-stepper-step>
-            </v-stepper-header>
+        <v-stepper alt-labels v-model="e1">
+          <v-stepper-header>
+            <v-stepper-step editable :complete="e1 > 1" step="1">
+              Datos usuario
+            </v-stepper-step>
+            <v-divider></v-divider>
+            <v-stepper-step :editable="iduser > 0" :complete="e1 > 2" step="2">
+              Cuenta Acceso
+            </v-stepper-step>
+          </v-stepper-header>
 
-            <v-stepper-items>
-              <!-- datos generales del usuario -->
-              <v-stepper-content step="1">
-                <v-form ref="form" v-model="valid">
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" md="4">
-                        <v-text-field
-                          v-model="cedula"
-                          label="Cedula"
-                          type="number"
-                          :rules="[(va) => !!va || 'Cedula requerida']"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="4">
-                        <v-text-field
-                          v-model="nombre"
-                          label="Nombres"
-                          :rules="[(va) => !!va || 'Numero requerido']"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="4">
-                        <v-text-field
-                          v-model="apellido"
-                          label="Apellidos"
-                          :rules="[(va) => !!va || 'Apellidos requeridos']"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="8">
-                        <v-text-field
-                          v-model="email"
-                          label="Email"
-                          :rules="[(va) => !!va || 'Email requerid']"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="4">
-                        <v-switch
-                          v-model="coordinador"
-                          :label="`Es Coordinador?`"
-                        ></v-switch>
-                      </v-col>
-                    </v-row>
-                    <v-btn
-                      class="success mr-4"
-                      :disabled="!valid"
-                      type="button"
-                      @click="guardar"
-                    >
-                      Guardar
-                    </v-btn>
-                    <v-btn class="mr-4"> Limpiar </v-btn>
-                    <v-btn
-                      color="primary"
-                      :disabled="iduser == 0"
-                      @click="e1 = 2"
-                    >
-                      Continuar
-                    </v-btn>
-                  </v-container>
-                </v-form>
-              </v-stepper-content>
-              <!-- cuenta de acceso  -->
-              <v-stepper-content step="2">
+          <v-stepper-items>
+            <!-- datos generales del usuario -->
+            <v-stepper-content step="1">
+              <v-form ref="form" v-model="valid">
                 <v-container>
                   <v-row>
-                    <v-col cols="12" md="3">
+                    <v-col cols="12" md="4">
                       <v-text-field
-                        v-model="username"
-                        label="Username"
-                        :rules="[(va) => !!va || 'Nombre de usuario requerido']"
+                        v-model="cedula"
+                        label="Cedula"
+                        type="number"
+                        :rules="[(va) => !!va || 'Cedula requerida']"
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="3">
+                    <v-col cols="12" md="4">
                       <v-text-field
-                        v-model="passw"
-                        label="Contraseña"
-                        type="password"
-                        :rules="[(va) => !!va || 'Contraseña requerida']"
+                        v-model="nombre"
+                        label="Nombres"
+                        :rules="[(va) => !!va || 'Numero requerido']"
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="3">
+                    <v-col cols="12" md="4">
                       <v-text-field
-                        v-model="confirmpassw"
-                        label="Confirmar Contraseña"
-                        type="password"
-                        :rules="[(va) => !!va || 'Contraseña requerida']"
+                        v-model="apellido"
+                        label="Apellidos"
+                        :rules="[(va) => !!va || 'Apellidos requeridos']"
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="3">
-                      <v-select
-                        v-model="rol"
-                        :items="listroles"
-                        item-text="nombre_rol"
-                        item-value="id_rol"
-                        label="Rol"
-                        return-object
-                      ></v-select>
+                    <v-col cols="12" md="8">
+                      <v-text-field
+                        v-model="email"
+                        label="Email"
+                        :rules="[(va) => !!va || 'Email requerid']"
+                        required
+                      ></v-text-field>
                     </v-col>
-                    <v-col cols="12"> </v-col>
+                    <v-col cols="4">
+                      <v-switch
+                        v-model="coordinador"
+                        :label="`Es Coordinador?`"
+                      ></v-switch>
+                    </v-col>
                   </v-row>
-                  <v-btn color="primary mr-4" @click="e1 = 1"> Atras </v-btn>
                   <v-btn
                     class="success mr-4"
                     :disabled="!valid"
                     type="button"
-                    @click="guardaracceso"
+                    @click="guardar"
                   >
                     Guardar
                   </v-btn>
                   <v-btn class="mr-4"> Limpiar </v-btn>
+                  <v-btn
+                    color="primary"
+                    :disabled="iduser == 0"
+                    @click="e1 = 2"
+                  >
+                    Continuar
+                  </v-btn>
                 </v-container>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-card>
-      </v-dialog>
-    </v-row>
+              </v-form>
+            </v-stepper-content>
+            <!-- cuenta de acceso  -->
+            <v-stepper-content step="2">
+              <v-container>
+                <v-row>
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      v-model="username"
+                      label="Username"
+                      :rules="[(va) => !!va || 'Nombre de usuario requerido']"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      v-model="passw"
+                      label="Contraseña"
+                      type="password"
+                      :rules="[(va) => !!va || 'Contraseña requerida']"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      v-model="confirmpassw"
+                      label="Confirmar Contraseña"
+                      type="password"
+                      :rules="[(va) => !!va || 'Contraseña requerida']"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-select
+                      v-model="rol"
+                      :items="listroles"
+                      item-text="nombre_rol"
+                      item-value="id_rol"
+                      label="Rol"
+                      return-object
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12"> </v-col>
+                </v-row>
+                <v-btn color="primary mr-4" @click="e1 = 1"> Atras </v-btn>
+                <v-btn
+                  class="success mr-4"
+                  :disabled="!valid"
+                  type="button"
+                  @click="guardaracceso"
+                >
+                  Guardar
+                </v-btn>
+                <v-btn class="mr-4"> Limpiar </v-btn>
+              </v-container>
+            </v-stepper-content>
+          </v-stepper-items>
+        </v-stepper>
+      </v-card>
+    </v-dialog>
 
     <v-data-table
       :headers="encabezado"
@@ -182,12 +176,14 @@
       :timeout="-1"
       v-model="snackbar"
       absolute
-      bottom
-      color="success"
+      top
+      :color="colorsnackbar"
       outlined
       right
+      z-index="1000"
     >
       {{ textsnakbar }}
+
       <template v-slot:action="{ attrs }">
         <v-btn color="green" text v-bind="attrs" @click="snackbar = false">
           Cerrar
@@ -233,6 +229,7 @@ export default {
       e1: 1,
       snackbar: false,
       textsnakbar: "inserto correctamente",
+      colorsnackbar :"warning"
     };
   },
   methods: {
@@ -309,14 +306,14 @@ export default {
       this.cedula = "";
     },
     async onedit(e) {
-      console.log(e);
-      //this.$refs.form.reset();
       this.dialog = true;
       this.iduser = e.id_use;
       this.nombre = e.nombre_use;
       this.apellido = e.apellido_use;
       this.email = e.email_use;
       this.cedula = e.cedula_use;
+      this.username = e.username_cue;
+      this.coordinador = e.coordinador_use;
     },
     async guardar() {
       if (this.$refs.form.validate()) {
@@ -327,18 +324,18 @@ export default {
           cedula: this.cedula,
           coordinador: this.coordinador,
         };
-
         let rescrea = await this.create(data);
         if (rescrea && rescrea.insertId > 0) {
           //this.dialog = false;
           this.iduser = rescrea.insertId;
           await this.load();
-          this.textsnakbar = "Se creo el usuario correctamente";
+          this.textsnakbar = "Se creo el usuario correctamente";          
+          this.colorsnackbar ="success"
           this.snackbar = true;
         } else {
           alert("errrorrr");
         }
-        console.log(rescrea);
+   
       }
     },
     async guardaracceso() {
@@ -354,6 +351,9 @@ export default {
         //this.dialog = false;
         this.idcuentaacceso = rescrea.insertId;
         await this.load();
+        this.textsnakbar = "Se creo cuenta de acceso correctamente";        
+        this.colorsnackbar ="success"
+        this.snackbar = true;
       } else {
         alert("errrorrr");
       }
