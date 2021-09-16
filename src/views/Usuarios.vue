@@ -73,7 +73,8 @@
                     type="button"
                     @click="guardar"
                   >
-                    Guardar
+                    <span v-if="iduser > 0">Editar</span>
+                    <span v-if="iduser == 0">Guardar</span>
                   </v-btn>
                   <v-btn class="mr-4"> Limpiar </v-btn>
                   <v-btn
@@ -228,8 +229,8 @@ export default {
       valid: true,
       e1: 1,
       snackbar: false,
-      textsnakbar: "inserto correctamente",
-      colorsnackbar :"warning"
+      textsnakbar: "Evento realizado",
+      colorsnackbar: "warning",
     };
   },
   methods: {
@@ -264,6 +265,24 @@ export default {
     create(data) {
       return new Promise((resolve) => {
         srvusuarios.insert(data).then(
+          (sus) => {
+            if (sus && sus.data) {
+              resolve(sus.data);
+            } else {
+              console.log("error ", sus);
+              resolve(null);
+            }
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
+    update(data) {
+      return new Promise((resolve) => {
+        srvusuarios.update(data).then(
           (sus) => {
             if (sus && sus.data) {
               resolve(sus.data);
@@ -324,18 +343,33 @@ export default {
           cedula: this.cedula,
           coordinador: this.coordinador,
         };
-        let rescrea = await this.create(data);
-        if (rescrea && rescrea.insertId > 0) {
-          //this.dialog = false;
-          this.iduser = rescrea.insertId;
-          await this.load();
-          this.textsnakbar = "Se creo el usuario correctamente";          
-          this.colorsnackbar ="success"
-          this.snackbar = true;
+        console.log("----asa",this.iduser)
+        if (parseInt(this.iduser) == 0) {
+          console.log("por que entra aqui")
+          let rescrea = await this.create(data);
+          if (rescrea && rescrea.insertId > 0) {
+            //this.dialog = false;
+            this.iduser = rescrea.insertId;
+            await this.load();
+            this.textsnakbar = "Se creo el usuario correctamente";
+            this.colorsnackbar = "success";
+            this.snackbar = true;
+          } else {
+            alert("errrorrr");
+          }
         } else {
-          alert("errrorrr");
+          data.iduser = this.iduser;
+          console.log("datos update->",data)
+          let rescrea = await this.update(data);
+          if (rescrea && rescrea.insertId > 0) {
+            await this.load();
+            this.textsnakbar = "Se creo el usuario correctamente";
+            this.colorsnackbar = "success";
+            this.snackbar = true;
+          } else {
+            alert("errrorrr");
+          }
         }
-   
       }
     },
     async guardaracceso() {
@@ -351,8 +385,8 @@ export default {
         //this.dialog = false;
         this.idcuentaacceso = rescrea.insertId;
         await this.load();
-        this.textsnakbar = "Se creo cuenta de acceso correctamente";        
-        this.colorsnackbar ="success"
+        this.textsnakbar = "Se creo cuenta de acceso correctamente";
+        this.colorsnackbar = "success";
         this.snackbar = true;
       } else {
         alert("errrorrr");
