@@ -76,7 +76,6 @@
                     <span v-if="iduser > 0">Editar</span>
                     <span v-if="iduser == 0">Guardar</span>
                   </v-btn>
-                  <v-btn class="mr-4"> Limpiar </v-btn>
                   <v-btn
                     color="primary"
                     :disabled="iduser == 0"
@@ -138,7 +137,6 @@
                 >
                   Guardar
                 </v-btn>
-                <v-btn class="mr-4"> Limpiar </v-btn>
               </v-container>
             </v-stepper-content>
           </v-stepper-items>
@@ -173,18 +171,8 @@
       </template>
     </v-data-table>
 
-    <v-snackbar
-      :timeout="-1"
-      v-model="snackbar"
-      absolute
-      top
-      :color="colorsnackbar"
-      outlined
-      right
-      z-index="1000"
-    >
+    <v-snackbar :timeout="-1" v-model="snackbar">
       {{ textsnakbar }}
-
       <template v-slot:action="{ attrs }">
         <v-btn color="green" text v-bind="attrs" @click="snackbar = false">
           Cerrar
@@ -230,7 +218,6 @@ export default {
       e1: 1,
       snackbar: false,
       textsnakbar: "Evento realizado",
-      colorsnackbar: "warning",
     };
   },
   methods: {
@@ -325,6 +312,7 @@ export default {
       this.cedula = "";
     },
     async onedit(e) {
+      console.log(e)
       this.dialog = true;
       this.iduser = e.id_use;
       this.nombre = e.nombre_use;
@@ -333,6 +321,7 @@ export default {
       this.cedula = e.cedula_use;
       this.username = e.username_cue;
       this.coordinador = e.coordinador_use;
+      this.rol = e.idroles_cue
     },
     async guardar() {
       if (this.$refs.form.validate()) {
@@ -343,31 +332,30 @@ export default {
           cedula: this.cedula,
           coordinador: this.coordinador,
         };
-        console.log("----asa",this.iduser)
+
         if (parseInt(this.iduser) == 0) {
-          console.log("por que entra aqui")
+          console.log("por que entra aqui");
           let rescrea = await this.create(data);
           if (rescrea && rescrea.insertId > 0) {
             //this.dialog = false;
             this.iduser = rescrea.insertId;
             await this.load();
             this.textsnakbar = "Se creo el usuario correctamente";
-            this.colorsnackbar = "success";
             this.snackbar = true;
           } else {
             alert("errrorrr");
           }
         } else {
           data.iduser = this.iduser;
-          console.log("datos update->",data)
+          console.log("datos update->", data);
           let rescrea = await this.update(data);
           if (rescrea && rescrea.insertId > 0) {
             await this.load();
-            this.textsnakbar = "Se creo el usuario correctamente";
-            this.colorsnackbar = "success";
+            this.textsnakbar = "Se edito el usuario correctamente";
             this.snackbar = true;
           } else {
-            alert("errrorrr");
+            this.textsnakbar = "Error! no se logro editar";
+            this.snackbar = true;
           }
         }
       }
@@ -379,19 +367,19 @@ export default {
         iduser: this.iduser,
         idrol: this.rol.id_rol,
       };
-      console.log("datos create acceso ->", data);
+
       let rescrea = await this.createacceso(data);
       if (rescrea && rescrea.insertId > 0) {
         //this.dialog = false;
         this.idcuentaacceso = rescrea.insertId;
         await this.load();
         this.textsnakbar = "Se creo cuenta de acceso correctamente";
-        this.colorsnackbar = "success";
         this.snackbar = true;
       } else {
-        alert("errrorrr");
+        this.textsnakbar = "Error! no se logro editar";
+        this.snackbar = true;
       }
-      console.log(rescrea);
+    
     },
     async load() {
       let res = await this.get();

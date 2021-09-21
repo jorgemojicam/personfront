@@ -66,6 +66,7 @@ export default {
         ruta: "registro",
       },
       { title: "Usuarios", icon: "mdi-account-circle", ruta: "usuarios" },
+      { title: "Permisos", icon: "mdi-lock-check-outline", ruta: "permisos" },
       { title: "Reportes", icon: "mdi-chart-box-outline", ruta: "reporte" },
     ],
   }),

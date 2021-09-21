@@ -1,6 +1,9 @@
 <template>
   <div>
+    <v-select :items="items" label="Agrupar por: " solo></v-select>
+
     <div id="main" style="width: 100%; height: 400px"></div>
+
     <v-card>
       <v-card-title>
         INFORME FIRMAS
@@ -41,6 +44,7 @@ export default {
       registrofirmas: [],
       valid: true,
       search: "",
+      items: ["Municipio", "Recaudador"],
     };
   },
   components: {},
@@ -58,11 +62,35 @@ export default {
         );
       });
     },
+    getbyfilters(filter) {
+      return new Promise((resolve) => {
+        srvregistro.getbyfilters(filter).then(
+          (sus) => {
+            resolve(sus);
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
   },
   async mounted() {
     let res = await this.get();
     this.registrofirmas = res.data;
-    console.log(res);
+
+    let resfilters = await this.getbyfilters("idmunicipio_reg");
+    console.log(" >>>>>>> ", resfilters);
+
+    let arrayLegend = [];
+    let arraySerValidas = [];
+    let arraySerNoValidas = [];
+    resfilters.data.forEach((element) => {
+      arrayLegend.push(element.nombre_mun);
+      arraySerValidas.push(element.validas);
+      arraySerNoValidas.push(element.invalidas);
+    });
 
     var chartDom = document.getElementById("main");
     var myChart = echarts.init(chartDom);
@@ -70,13 +98,18 @@ export default {
 
     option = {
       title: {
-        text: "REGISTRO DE FIRMAS",
+        text: "Grafico firmas",
       },
       tooltip: {
         trigger: "axis",
       },
       legend: {
-        data: ["BARRANQUILLA", "CANDELARIA", "BOGOTA", "GIRON", "FLORIDA"],
+        data: ["Validas", "No Validas"],
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {},
+        },
       },
       grid: {
         left: "3%",
@@ -84,54 +117,33 @@ export default {
         bottom: "3%",
         containLabel: true,
       },
-      toolbox: {
-        feature: {
-          saveAsImage: {},
+      xAxis: [
+        {
+          type: "category",
+          boundaryGap: false,
+          data: arrayLegend,
         },
-      },
-      xAxis: {
-        type: "category",
-        boundaryGap: false,
-        data: ["BARRANQUILLA", "CANDELARIA", "BOGOTA", "GIRON", "FLORIDA"],
-      },
-      yAxis: {
-        type: "value",
-      },
+      ],
+      yAxis: [
+        {
+          type: "value",
+        },
+      ],
       series: [
         {
-          name: "BARRANQUILLA",
+          name: "Validas",
           type: "line",
-          stack: "",
-          data: [120, 132, 101, 134, 90, 230, 210],
+          data: arraySerValidas,
         },
         {
-          name: "CANDELARIA",
+          name: "No Validas",
           type: "line",
-          stack: "",
-          data: [220, 182, 191, 234, 290, 330, 310],
-        },
-        {
-          name: "BOGOTA",
-          type: "line",
-          stack: "",
-          data: [150, 232, 201, 154, 190, 330, 410],
-        },
-        {
-          name: "GIRON",
-          type: "line",
-          stack: "",
-          data: [320, 332, 301, 334, 390, 330, 320],
-        },
-        {
-          name: "FLORIDA",
-          type: "line",
-          stack: "",
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          data: arraySerNoValidas,
         },
       ],
     };
-
     option && myChart.setOption(option);
   },
 };
 </script>
+
