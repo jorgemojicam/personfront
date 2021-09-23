@@ -8,7 +8,7 @@
       item-value="id_rol"
       return-object
       @change="changerol($event)"
-      outlined
+      solo
     ></v-select>
     <v-data-table :headers="headers" :items="listmodulos" class="elevation-1">
       <template v-slot:top>
@@ -21,18 +21,36 @@
           </v-btn>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.editar`]="{ item }">
-        <v-checkbox
-          v-model="item.editar"
-          :false-value="0"
-          :true-value="1"
-        ></v-checkbox>
-      </template>
       <template v-slot:[`item.ver`]="{ item }">
         <v-checkbox
           v-model="item.ver"
           :false-value="0"
           :true-value="1"
+          @click="gestion(item)"
+        ></v-checkbox>
+      </template>
+      <template v-slot:[`item.editar`]="{ item }">
+        <v-checkbox
+          v-model="item.editar"
+          :false-value="0"
+          :true-value="1"
+          @click="gestion(item)"
+        ></v-checkbox>
+      </template>
+      <template v-slot:[`item.crear`]="{ item }">
+        <v-checkbox
+          v-model="item.crear"
+          :false-value="0"
+          :true-value="1"
+          @click="gestion(item)"
+        ></v-checkbox>
+      </template>
+      <template v-slot:[`item.eliminar`]="{ item }">
+        <v-checkbox
+          v-model="item.eliminar"
+          :false-value="0"
+          :true-value="1"
+          @click="gestion(item)"
         ></v-checkbox>
       </template>
     </v-data-table>
@@ -42,6 +60,7 @@
 <script>
 import srvmodulos from "../services/modulos.service";
 import srvroles from "../services/roles.service";
+import srvpermisos from "../services/permisos.service";
 export default {
   name: "permisos",
   props: {},
@@ -50,8 +69,8 @@ export default {
       rol: "",
       headers: [
         { text: "Nombre", value: "nombre_mod" },
-        { text: "Crear", value: "crear" },
         { text: "Ver", value: "ver" },
+        { text: "Crear", value: "crear" },
         { text: "Editar", value: "editar" },
         { text: "Eliminar", value: "eliminar" },
       ],
@@ -66,6 +85,36 @@ export default {
           (suss) => {
             if (suss && suss.data) {
               resolve(suss.data);
+            }
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
+    update(data) {
+      return new Promise((resolve) => {
+        srvpermisos.update(data).then(
+          (suss) => {
+            if (suss) {
+              resolve(suss);
+            }
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
+    insert(data) {
+      return new Promise((resolve) => {
+        srvpermisos.insert(data).then(
+          (suss) => {
+            if (suss) {
+              resolve(suss);
             }
           },
           (err) => {
@@ -90,20 +139,41 @@ export default {
         );
       });
     },
-    isTrue(item) {
-      return item == "1" ? true : false;
-    },
     async changerol(e) {
       let idrol = e.id_rol;
       let resmodulo = await this.getbyrol(idrol);
       this.listmodulos = resmodulo;
     },
+    async gestion(item) {
+      console.log(item);
+      let data = {
+        idrol: this.rol.id_rol,
+        idmodulo: item.id_mod,
+        ver: item.ver,
+        crear: item.crear,
+        editar: item.editar,
+        eliminar: item.eliminar,
+      };
+      if (item.id) {
+        data.id = item.id;
+        let resup = await this.update(data);
+        console.log("insert -> ", resup);
+        this.load();
+      } else {
+        let resin = await this.insert(data);
+        console.log("update -> ", resin);
+        this.load();
+      }
+    },
+    load() {
+      this.rol = this.listroles[0];
+      this.changerol(this.rol);
+    },
   },
   async mounted() {
     let resrol = await this.getroles();
     this.listroles = resrol;
-    this.rol = this.listroles[0];
-    this.changerol(this.rol);
+    this.load();
   },
 };
 </script>
