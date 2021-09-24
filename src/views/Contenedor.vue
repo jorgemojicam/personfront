@@ -29,17 +29,22 @@
       <v-list dense>
         <v-list-item
           v-for="item in items"
-          :key="item.title"
+          :key="item.nombre_mod"
           link
-          :to="item.ruta"
+          :to="{
+            name: item.ruta_mod,
+            params: { id: { ver: item.ver, crear: 0, editar: 1, eliminar: 0 } },
+          }"        
         >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+    
+            <v-list-item-icon >
+              <v-icon>{{ item.icono_mod }}</v-icon>
+            </v-list-item-icon>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+            <v-list-item-content >
+              <v-list-item-title>{{ item.nombre_mod }}</v-list-item-title>
+            </v-list-item-content>
+    
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -53,22 +58,14 @@
 
 <script>
 import srvlocalStorage from "../services/localstorage.service";
+import srvmodulos from "../services/modulos.service";
 export default {
   name: "Contenedor",
 
   data: () => ({
     drawer: false,
     group: null,
-    items: [
-      {
-        title: "Registro",
-        icon: "mdi-clipboard-check-outline",
-        ruta: "registro",
-      },
-      { title: "Usuarios", icon: "mdi-account-circle", ruta: "usuarios" },
-      { title: "Permisos", icon: "mdi-lock-check-outline", ruta: "permisos" },
-      { title: "Reportes", icon: "mdi-chart-box-outline", ruta: "reporte" },
-    ],
+    items: [],
   }),
   methods: {
     logout() {
@@ -77,11 +74,35 @@ export default {
       this.$store.state.isAuthenticated = false;
       this.$router.push("login");
     },
+    getbyrol(idrol) {
+      return new Promise((resolve) => {
+        srvmodulos.getbyrol(idrol).then(
+          (suss) => {
+            if (suss && suss.data) {
+              resolve(suss.data);
+            }
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
   },
   watch: {
     group() {
       this.drawer = false;
     },
+  },
+  async mounted() {
+    let rolUser = this.$store.state.user.idroles_cue;
+    console.log("user->", rolUser);
+    let modulos = await this.getbyrol(rolUser);
+    if (modulos) {
+      this.items = modulos;
+    }
+    console.log("mod-> ", modulos);
   },
 };
 </script>

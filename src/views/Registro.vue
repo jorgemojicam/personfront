@@ -133,6 +133,7 @@ export default {
       ],
       registrofirmas: [],
       valid: true,
+      paramroute:null,
     };
   },
   methods: {
@@ -236,7 +237,7 @@ export default {
           fecha: "2021-09-09",
           idcuentaacceso: this.$store.state.user.id_use,
           iduser: this.coordinador.id_use,
-          folio: parseInt(this.folio)
+          folio: parseInt(this.folio),
         };
 
         let rescrea = await this.create(data);
@@ -254,11 +255,10 @@ export default {
       return `${item.nombre_use} ${item.apellido_use}`;
     },
     async load() {
-      let iduser = this.$store.state.user.id_use
-      console.log("entro")
+      let iduser = this.$store.state.user.id_use;
+      console.log("entro");
       let res = await this.get(iduser);
       this.registrofirmas = res.data;
-      
     },
   },
 
@@ -270,9 +270,13 @@ export default {
       );
     },
   },
+  created() {
+    this.paramroute = this.$route.params.id;
+    console.log(this.paramroute)
+  },
   async mounted() {
-    this.load()
-    
+    this.load();
+
     let resdepto = await this.getDepto();
     this.listdeptos = resdepto;
 
