@@ -10,7 +10,7 @@ export default {
     insert(data) {
         return axios.post(`${process.env.VUE_APP_BASEURL}cuentaacceso`, data);
     },
-    update() {
-        return axios.put('http://localhost:3000/api/registro');
+    update(data) {
+        return axios.put(`${process.env.VUE_APP_BASEURL}cuentaacceso`, data);
     }
 }

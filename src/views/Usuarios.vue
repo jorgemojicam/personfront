@@ -171,12 +171,10 @@
       </template>
     </v-data-table>
 
-    <v-snackbar :timeout="-1" v-model="snackbar">
+    <v-snackbar :timeout="-1" :color="snackcolor" v-model="snackbar">
       {{ textsnakbar }}
       <template v-slot:action="{ attrs }">
-        <v-btn color="green" text v-bind="attrs" @click="snackbar = false">
-          Cerrar
-        </v-btn>
+        <v-btn text v-bind="attrs" @click="snackbar = false"> Cerrar </v-btn>
       </template>
     </v-snackbar>
   </div>
@@ -217,6 +215,7 @@ export default {
       valid: true,
       e1: 1,
       snackbar: false,
+      snackcolor: "success",
       textsnakbar: "Evento realizado",
     };
   },
@@ -303,16 +302,35 @@ export default {
         );
       });
     },
+    updateacceso(data) {
+      return new Promise((resolve) => {
+        srvcuentaacceso.update(data).then(
+          (sus) => {
+            if (sus && sus.data) {
+              resolve(sus.data);
+            } else {
+              console.log("error ", sus);
+              resolve(null);
+            }
+          },
+          (err) => {
+            console.log(err);
+            resolve(null);
+          }
+        );
+      });
+    },
     async oncreate() {
       this.dialog = true;
       this.iduser = 0;
+      this.idcuentaacceso = 0;
       this.nombre = "";
       this.apellido = "";
       this.email = "";
       this.cedula = "";
     },
     async onedit(e) {
-      console.log(e)
+      console.log(e);
       this.dialog = true;
       this.iduser = e.id_use;
       this.nombre = e.nombre_use;
@@ -321,7 +339,8 @@ export default {
       this.cedula = e.cedula_use;
       this.username = e.username_cue;
       this.coordinador = e.coordinador_use;
-      this.rol = e.idroles_cue
+      this.rol = e.idroles_cue;
+      this.idcuentaacceso = e.id_cue;
     },
     async guardar() {
       if (this.$refs.form.validate()) {
@@ -334,27 +353,27 @@ export default {
         };
 
         if (parseInt(this.iduser) == 0) {
-          console.log("por que entra aqui");
           let rescrea = await this.create(data);
           if (rescrea && rescrea.insertId > 0) {
-            //this.dialog = false;
             this.iduser = rescrea.insertId;
             await this.load();
             this.textsnakbar = "Se creo el usuario correctamente";
             this.snackbar = true;
           } else {
-            alert("errrorrr");
+            this.snackbar = true;
+            this.snackcolor = "error";
           }
         } else {
           data.iduser = this.iduser;
-          console.log("datos update->", data);
           let rescrea = await this.update(data);
-          if (rescrea && rescrea.insertId > 0) {
+
+          if (rescrea && rescrea.affectedRows > 0) {
             await this.load();
             this.textsnakbar = "Se edito el usuario correctamente";
             this.snackbar = true;
           } else {
             this.textsnakbar = "Error! no se logro editar";
+            this.snackcolor = "error";
             this.snackbar = true;
           }
         }
@@ -365,21 +384,33 @@ export default {
         username: this.cedula,
         password: this.passw,
         iduser: this.iduser,
-        idrol: this.rol.id_rol,
+        idrol: this.rol,
       };
-
-      let rescrea = await this.createacceso(data);
-      if (rescrea && rescrea.insertId > 0) {
-        //this.dialog = false;
-        this.idcuentaacceso = rescrea.insertId;
-        await this.load();
-        this.textsnakbar = "Se creo cuenta de acceso correctamente";
-        this.snackbar = true;
+      if (this.idcuentaacceso == 0) {
+        let rescrea = await this.createacceso(data);
+        if (rescrea && rescrea.insertId > 0) {
+          this.idcuentaacceso = rescrea.insertId;
+          await this.load();
+          this.textsnakbar = "Se creo cuenta de acceso correctamente";
+          this.snackbar = true;
+        } else {
+          this.textsnakbar = "Error! no se logro editar";
+          this.snackbar = true;
+        }
       } else {
-        this.textsnakbar = "Error! no se logro editar";
-        this.snackbar = true;
+        data.id = this.idcuentaacceso;
+        console.log("parametros ->", data);
+        let res = await this.updateacceso(data);
+        if (res && res.affectedRows > 0) {
+          console.log("entro aqui");
+          this.textsnakbar = "Se edito la cuenta de acceso correctamente";
+          this.snackbar = true;
+        } else {
+          this.snackcolor = "error";
+          this.textsnakbar = "Error! no se logro editar";
+          this.snackbar = true;
+        }
       }
-    
     },
     async load() {
       let res = await this.get();
