@@ -97,12 +97,12 @@ export default {
   },
   async mounted() {
     let rolUser = this.$store.state.user.idroles_cue;
-    console.log("user->", rolUser);
+
     let modulos = await this.getbyrol(rolUser);
     if (modulos) {
       this.items = modulos;
     }
-    console.log("mod-> ", modulos);
+
   },
 };
 </script>

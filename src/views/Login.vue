@@ -1,44 +1,46 @@
 <template>
-  <v-container bg fill-height grid-list-md text-xs-center>
-    <v-row align="center" justify="center">
-      <v-card elevation="2" max-width="600" shaped outlined>
-        <v-img
-          class="white--text align-end"
-          gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-          src="https://images4.alphacoders.com/668/thumb-1920-668770.jpg"
-        >
-          <v-card-title>Inicion de sesion</v-card-title>
-        </v-img>
+  <v-app id="login" class="secondary">
+    <v-container fluid fill-height>
+      <v-layout align-center justify-center>
+        <v-flex xs12 sm8 md4 lg4>
+          <v-card class="elevation-1 pa-3">
+            <v-form ref="form" v-model="valid" lazy-validation>
+              <v-card-text>
+                <div class="layout column align-center">
+                  <img
+                    src="../assets/logo.svg"
+                    alt="Vue Material Admin"
+                    width="180"
+                    height="180"
+                  />
+                  <h1 class="flex my-4 primary--text">Iniciar sesion</h1>
+                </div>
 
-        <v-card-text>
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-text-field
-              v-model="username"
-              label="Cedula"
-              :rules="[(v) => !!v || 'Ingrese cedula']"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="password"
-              type="password"
-              :rules="[(v) => !!v || 'Ingrese contraseña']"
-              label="Contrasena"
-              required
-            ></v-text-field>
-
-            <v-btn
-              :disabled="!valid"
-              color="success"
-              class="mr-4"
-              @click="login"
-            >
-              Login
-            </v-btn>
-            <v-btn color="warning"> Recuperar Contraseña </v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-row>
+                <v-text-field
+                  v-model="username"
+                  label="Cedula"
+                  :rules="[(v) => !!v || 'Ingrese cedula']"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="password"
+                  type="password"
+                  :rules="[(v) => !!v || 'Ingrese contraseña']"
+                  label="Contrasena"
+                  required
+                ></v-text-field>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn :disabled="!valid" @click="login" block color="primary"
+                  >Login</v-btn
+                >
+              </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
 
     <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ snacktext }}
@@ -48,7 +50,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -82,7 +84,7 @@ export default {
             if (suss.data) {
               if (suss.data && suss.data.dataUser) {
                 this.$store.state.isAuthenticated = true;
-                this.$store.state.user = suss.data.dataUser;        
+                this.$store.state.user = suss.data.dataUser;
                 srvlocalStorage.setState(true);
                 srvlocalStorage.setToken(suss.data.accesToken);
                 srvlocalStorage.setUser(suss.data.dataUser);
@@ -105,3 +107,15 @@ export default {
   mounted() {},
 };
 </script>
+
+<style scoped>
+#login {
+  height: 50%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+  z-index: 0;
+}
+</style>

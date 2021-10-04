@@ -1,6 +1,14 @@
 <template>
   <div>
-    <v-select :items="items" label="Agrupar por: " solo></v-select>
+    <v-select
+      :items="items"
+      label="Agrupar por: "
+      solo
+      v-model="filtro"
+      item-text="text"
+      item-value="value"
+      @change="changefiltro"
+    ></v-select>
 
     <div id="main" style="width: 100%; height: 400px"></div>
 
@@ -44,7 +52,11 @@ export default {
       registrofirmas: [],
       valid: true,
       search: "",
-      items: ["Municipio", "Recaudador"],
+      items: [
+        { text: "Municipio", value: "idmunicipio_reg" },
+        { text: "Recaudador", value: "idcuentaacceso_reg" },
+      ],
+      filtro: "",
     };
   },
   components: {},
@@ -75,74 +87,85 @@ export default {
         );
       });
     },
+    async load(filter) {
+      let resfilters = await this.getbyfilters(filter);
+
+      let res = await this.get();
+      this.registrofirmas = res.data;
+
+      let arrayLegend = [];
+      let arraySerValidas = [];
+      let arraySerNoValidas = [];
+
+      resfilters.data.forEach((element) => {
+        if (filter == "idmunicipio_reg") {
+          arrayLegend.push(element.nombre_mun);
+        } else {
+          arrayLegend.push(element.full_name);
+        }
+        arraySerValidas.push(element.validas);
+        arraySerNoValidas.push(element.invalidas);
+      });
+
+      var chartDom = document.getElementById("main");
+      var myChart = echarts.init(chartDom);
+      var option;
+
+      option = {
+        title: {
+          text: "Grafico firmas",
+        },
+        tooltip: {
+          trigger: "axis",
+        },
+        legend: {
+          data: ["Validas", "No Validas"],
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {},
+          },
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
+        },
+        xAxis: [
+          {
+            type: "category",
+            boundaryGap: false,
+            data: arrayLegend,
+          },
+        ],
+        yAxis: [
+          {
+            type: "value",
+          },
+        ],
+        series: [
+          {
+            name: "Validas",
+            type: "line",
+            data: arraySerValidas,
+          },
+          {
+            name: "No Validas",
+            type: "line",
+            data: arraySerNoValidas,
+          },
+        ],
+      };
+      option && myChart.setOption(option);
+    },
+    changefiltro() {     
+      this.load(this.filtro);
+    },
   },
   async mounted() {
-    let res = await this.get();
-    this.registrofirmas = res.data;
-
-    let resfilters = await this.getbyfilters("idmunicipio_reg");
-    console.log(" >>>>>>> ", resfilters);
-
-    let arrayLegend = [];
-    let arraySerValidas = [];
-    let arraySerNoValidas = [];
-    resfilters.data.forEach((element) => {
-      arrayLegend.push(element.nombre_mun);
-      arraySerValidas.push(element.validas);
-      arraySerNoValidas.push(element.invalidas);
-    });
-
-    var chartDom = document.getElementById("main");
-    var myChart = echarts.init(chartDom);
-    var option;
-
-    option = {
-      title: {
-        text: "Grafico firmas",
-      },
-      tooltip: {
-        trigger: "axis",
-      },
-      legend: {
-        data: ["Validas", "No Validas"],
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: {},
-        },
-      },
-      grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "3%",
-        containLabel: true,
-      },
-      xAxis: [
-        {
-          type: "category",
-          boundaryGap: false,
-          data: arrayLegend,
-        },
-      ],
-      yAxis: [
-        {
-          type: "value",
-        },
-      ],
-      series: [
-        {
-          name: "Validas",
-          type: "line",
-          data: arraySerValidas,
-        },
-        {
-          name: "No Validas",
-          type: "line",
-          data: arraySerNoValidas,
-        },
-      ],
-    };
-    option && myChart.setOption(option);
+    this.filtro = this.items[0];
+    this.load(this.filtro.value);
   },
 };
 </script>
