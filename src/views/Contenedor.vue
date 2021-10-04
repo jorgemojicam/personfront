@@ -34,7 +34,7 @@
           :to="{
             name: item.ruta_mod,
             params: { id: { ver: item.ver, crear: 0, editar: 1, eliminar: 0 } },
-          }"        
+          }"          
         >
     
             <v-list-item-icon >
@@ -76,7 +76,7 @@ export default {
     },
     getbyrol(idrol) {
       return new Promise((resolve) => {
-        srvmodulos.getbyrol(idrol).then(
+        srvmodulos.getbyver(idrol).then(
           (suss) => {
             if (suss && suss.data) {
               resolve(suss.data);

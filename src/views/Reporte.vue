@@ -57,6 +57,7 @@ export default {
         { text: "Recaudador", value: "idcuentaacceso_reg" },
       ],
       filtro: "",
+      myChart:null
     };
   },
   components: {},
@@ -107,8 +108,6 @@ export default {
         arraySerNoValidas.push(element.invalidas);
       });
 
-      var chartDom = document.getElementById("main");
-      var myChart = echarts.init(chartDom);
       var option;
 
       option = {
@@ -157,13 +156,16 @@ export default {
           },
         ],
       };
-      option && myChart.setOption(option);
+      option && this.myChart.setOption(option);
     },
-    changefiltro() {     
+    changefiltro() {
       this.load(this.filtro);
     },
   },
   async mounted() {
+    var chartDom = document.getElementById("main");
+    this.myChart = echarts.init(chartDom);
+
     this.filtro = this.items[0];
     this.load(this.filtro.value);
   },
