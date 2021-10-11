@@ -1,46 +1,45 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable camelcase */
+import '@/plugins/vue-composition-api'
+import '@/styles/styles.scss'
 import Vue from 'vue'
+import axios from 'axios'
 import App from './App.vue'
-import router from './router'
 import vuetify from './plugins/vuetify'
+import router from './router'
 import store from './store'
-import axios from 'axios';
 
 Vue.config.productionTip = false
 
 // Add a request interceptor
-axios.interceptors.request.use(function (config) {
-  const auth_token = JSON.parse(localStorage.getItem('token'));
+axios.interceptors.request.use(config => {
+  const auth_token = JSON.parse(localStorage.getItem('token'))
   if (auth_token) {
-    config.headers.Authorization = `Bearer ${auth_token}`;
+    config.headers.Authorization = `Bearer ${auth_token}`
   }
-  return config;
-}, function (error) {
-  return Promise.reject(error);
-});
 
-axios.interceptors.response.use(function (response) {
-  return response;
-}, function (error) {
-  return Promise.reject(error);
-});
+  return config
+}, error => Promise.reject(error))
+
+axios.interceptors.response.use(response => response, error => Promise.reject(error))
 
 router.beforeEach((to, from, next) => {
-  const isAuth = sessionStorage.getItem("isAuthenticated")
+  const isAuth = sessionStorage.getItem('isAuthenticated')
   if (to.name !== 'login' && !isAuth) {
     next({
-      name: 'login'
+      name: 'login',
     })
   } else {
-    const user = JSON.parse(localStorage.getItem("user"))
+    const user = JSON.parse(localStorage.getItem('user'))
     store.state.isAuthenticated = isAuth
-    store.state.user = user;
+    store.state.user = user
     next()
   }
 })
 
 new Vue({
   router,
-  vuetify,
   store,
-  render: h => h(App)
+  vuetify,
+  render: h => h(App),
 }).$mount('#app')
