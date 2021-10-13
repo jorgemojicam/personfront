@@ -5,7 +5,7 @@
       <v-card elevation="12">
         <v-card-title>Nuevo registro</v-card-title>
         <v-card-text>
-          <nueva-firma></nueva-firma>
+          <nueva-firma @load="load($event)"></nueva-firma>
         </v-card-text>
       </v-card>
     </v-col>
@@ -13,7 +13,7 @@
     <v-card>
       <v-card-title>Datos Registro</v-card-title>
       <v-card-text>
-        <table-firmas :loadtable="loadTable" @load="load($event)"></table-firmas>
+        <table-firmas :listfirmas="registrofirmas"></table-firmas>
       </v-card-text>
     </v-card>
   </div>
@@ -22,6 +22,7 @@
 <script>
 import NuevaFirma from './firmas/NuevaFirma.vue'
 import TableFirmas from './firmas/TableFirmas.vue'
+import srvregistro from '../services/registro'
 
 export default {
   name: 'Registro',
@@ -31,6 +32,7 @@ export default {
       loadTable: false,
       valid: true,
       paramroute: null,
+      registrofirmas: [],
     }
   },
   created() {
@@ -39,10 +41,27 @@ export default {
   },
   async mounted() {
     this.load()
+    console.log('entro')
   },
   methods: {
-    load(load) {
-      this.loadTable = load
+    get(iduser) {
+      return new Promise(resolve => {
+        srvregistro.getbyuser(iduser).then(
+          sus => {
+            resolve(sus)
+          },
+          err => {
+            console.log(err)
+            resolve(null)
+          },
+        )
+      })
+    },
+    async load() {
+      this.loadTable = true
+      const iduser = this.$store.state.user.id_use
+      const res = await this.get(iduser)
+      this.registrofirmas = res.data
     },
   },
 }

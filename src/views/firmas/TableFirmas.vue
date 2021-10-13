@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="registrofirmas" class="elevation-1">
+  <v-data-table :headers="headers" :items="listfirmas" class="elevation-1">
     <template v-slot:[`item.actions`]="{ item }">
       <v-chip :color="getColor(item.calories)" dark>
         {{ item.calories }}
@@ -9,13 +9,14 @@
 </template>
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref } from '@vue/composition-api'
-import srvregistro from '../../services/registro'
 
 export default {
   name: 'TableFirmas',
   components: {},
-  props: { loadtable: Boolean },
+  props: {
+    loadtable: Boolean,
+    listfirmas: Array,
+  },
   data() {
     return {
       headers: [
@@ -26,40 +27,18 @@ export default {
         { text: 'No Validas', value: 'numerovalidas_reg' },
         { text: 'Total', value: 'total_reg' },
       ],
-      registrofirmas: [],
+
       valid: true,
       paramroute: null,
+      registrofirmas: [],
     }
   },
-  async mounted() {
-    this.load()
-  },
-
   methods: {
     getColor(calories) {
       if (calories > 400) return 'red'
       if (calories > 200) return 'orange'
 
       return 'green'
-    },
-    get(iduser) {
-      return new Promise(resolve => {
-        srvregistro.getbyuser(iduser).then(
-          sus => {
-            resolve(sus)
-          },
-          err => {
-            console.log(err)
-            resolve(null)
-          },
-        )
-      })
-    },
-    async load() {
-      const iduser = this.$store.state.user.id_use
-      console.log(`Id user ${iduser}`)
-      const res = await this.get(iduser)
-      this.registrofirmas = res.data
     },
   },
   setup() {},

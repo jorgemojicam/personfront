@@ -259,6 +259,7 @@ export default {
         const rescrea = await this.create(data)
         if (rescrea.insertId > 0) {
           // await this.load()
+          console.log('prepara el load')
           this.$emit('load', true)
         }
         console.log(rescrea)
